@@ -1,40 +1,88 @@
 # AssetFlow
 
-Enterprise Asset & Resource Management System, built by our team for Odoo Hackathon '26.
+AssetFlow is an enterprise asset and resource management system that gives organizations a single, structured place to track equipment, allocate it to the right people, book shared spaces without conflicts, and keep maintenance and audits under proper approval. It's built for any organization that owns physical things and shared spaces - offices, schools, hospitals, factories, agencies - and is currently being developed by our team for Odoo Hackathon '26. The people who use it day to day are admins setting up departments and categories, asset managers registering and allocating equipment, department heads approving requests for their teams, and employees booking rooms or reporting a broken laptop. The business case is simple: spreadsheets and paper logs don't scale, they don't prevent double-booking, and they don't stop someone from allocating an asset that's already with someone else. AssetFlow replaces that with rules the system enforces automatically.
 
-Repository: https://github.com/diwakar-bhagat/odoo_26 (AssetFlow lives under the `/AssetFlow` folder)
-
-Mockup / POC: https://app.excalidraw.com/l/65VNwvy7c4X/5ceOBMjbDby
+Webside- assetflow-plum.vercel.app/
 
 ## Overview
 
-Most organizations still track equipment, furniture, vehicles, and shared spaces using spreadsheets and paper registers. It works fine until someone allocates a laptop that's already with someone else, or two teams book the same conference room at the same time.
+Most organizations track their assets the same way: a spreadsheet somewhere, updated inconsistently, with no real record of who has what or whether a room is free at 2pm on Tuesday. That works until it doesn't - until two people book the same conference room, or an asset gets allocated to someone when it's already sitting with another employee, or a piece of equipment goes in for repair without anyone approving it first.
 
-AssetFlow is a centralized ERP module that solves this. It lets any organization - offices, schools, hospitals, factories, agencies - register assets, allocate them without conflicts, book shared resources by time slot, route maintenance through proper approvals, and run structured audit cycles. It is scoped on purpose: no purchasing, no invoicing, no accounting. Just asset and resource lifecycle management, done properly.
+AssetFlow is built to close those gaps. It gives every organization a system where assets move through a defined lifecycle (Available, Allocated, Reserved, Under Maintenance, Lost, Retired, Disposed), where allocation conflicts are blocked automatically instead of discovered later, where resource bookings are checked for time overlaps before they're confirmed, and where maintenance work can't start until someone with the right role has approved it. On top of that, scheduled audit cycles let organizations periodically verify that what's on paper matches what's actually in the building.
 
-## About This Codebase
+The system deliberately stays out of purchasing, invoicing, and accounting. It tracks the physical and operational side of assets - not the money.
 
-This project is built on top of our existing admin dashboard shell (originally set up for a garment production ERP called "CTA Apparels" - you'll still see references to it in the sidebar branding, `Dashboard.html`, `erp.ctaapparels.com/`, and the `components/cta` folder). That base gave us the layout system, theming, and component library already wired up, so the team could focus on building the actual AssetFlow modules instead of a UI shell from scratch.
+## Key Features
 
-The AssetFlow-specific work - the ten screens from the problem statement, the database schema, the API routes, and the business logic - lives under `src/app/(main)/dashboard/`, `src/app/api/af/`, and `src/lib/assetflow-schema.ts`. Everything under `prisma/`, `legacy_*`, and `_reference/` is leftover from the CTA Apparels base and is not part of the AssetFlow feature set.
+**Organization setup**
+- Department management with optional parent departments for hierarchy
+- Asset category management, including category-specific custom fields (for example, warranty period on electronics)
+- A central employee directory, which is also the only place roles are assigned
 
-If you open the app right now, the sidebar will still show a mix of old CTA Apparels navigation (CTA Mill, Procurement & Dispatch, Sample Tracking, Style Development, etc.) alongside the new AssetFlow modules. Cleaning that up - removing the unused CTA nav items and finishing the rebrand - is one of the next things on our list.
+**Asset lifecycle**
+- Asset registration with auto-generated asset tags, serial numbers, condition, location, and supporting documents
+- Search and filter by tag, serial number, category, status, department, or location
+- Full lifecycle tracking across seven states, with per-asset allocation and maintenance history
 
-## Tech Stack
+**Allocation and transfers**
+- Allocate assets to an employee or a department, with an optional expected return date
+- Automatic conflict blocking - an asset that's already allocated can't be allocated again; the requester is shown who has it and offered a transfer request instead
+- Transfer workflow: requested, approved, re-allocated, with history updated automatically
+- Return flow with condition check-in notes
 
-- Next.js 16 (App Router) with TypeScript
-- Tailwind CSS v4, shadcn/ui, Radix UI, Framer Motion for the interface
-- Zustand for client state, TanStack Query and TanStack Table for data fetching and tables
-- NextAuth with the Credentials provider, passwords hashed with bcrypt
-- PostgreSQL through the Neon serverless driver, with raw SQL table definitions in `src/lib/assetflow-schema.ts`
-- Redis (Upstash) for caching
-- React Hook Form with Zod for form validation
-- Biome for linting and formatting, Husky and lint-staged for pre-commit checks
-- Deployed on Vercel, with a Docker setup available for self-hosting
+**Resource booking**
+- Calendar view of a resource's existing bookings
+- Overlap validation, so two people can't book the same room for overlapping times
+- Cancel and reschedule, with reminder notifications before a booking starts
 
-## Architecture
+**Maintenance management**
+- Raise a request with issue description, priority, and photo
+- Approval required before any repair work starts
+- Status flow from pending through technician assignment to resolved, with the asset's status syncing automatically at each step
 
-At a high level: the browser talks to the Next.js application, which is split into frontend pages (the ten screens below) and API routes under `/api/af`. Those routes are the only thing that touches the database - they go through NextAuth for session/credential checks, PostgreSQL (Neon) for all persistent data, and Redis (Upstash) for caching.
+**Audits**
+- Create audit cycles scoped to a department, location, or date range
+- Assign one or more auditors
+- Mark each asset verified, missing, or damaged
+- Auto-generated discrepancy reports, with cycle closure locking the results and updating asset statuses
+
+**Reporting and notifications**
+- Utilization trends, maintenance frequency, department allocation summaries, and booking heatmaps
+- Full activity log of who did what and when
+- Notifications for assignments, approvals, overdue returns, and audit flags
+
+## Screenshots
+
+### Sidebar navigation
+
+![Sidebar navigation](docs/screenshots/sidebar-navigation.png)
+
+This is the current navigation, which still carries the CTA Apparels menu items (CTA Mill, Procurement & Dispatch, Sample Tracking, Style Development, Fabric and Trim Inventory, Supplier Performance) from the base admin template the project was built on. These are not part of AssetFlow and are scheduled for removal as part of the rebrand cleanup.
+
+### Dashboard overview
+
+![Dashboard overview](docs/screenshots/dashboard-overview.png)
+
+The dashboard as it renders today, on the CTA Apparels base theme. AssetFlow's own dashboard (KPI cards for available/allocated assets, maintenance due today, active bookings, pending transfers, and upcoming returns) is being built into this same shell.
+
+## System Architecture
+
+**Frontend**
+Built with Next.js (App Router) and TypeScript. Pages live under `src/app/(main)/dashboard/`, one folder per module - organization, assets, allocations, transfers, bookings, maintenance, audits, and notifications. UI is composed with Tailwind CSS, shadcn/ui, and Radix primitives, with Zustand for client state and TanStack Query/Table for data fetching and tabular views.
+
+**Backend**
+API routes live under `src/app/api/af/` - one route group per module, mirroring the frontend structure (`assets`, `allocations`, `bookings`, `maintenance`, `audits`, `transfers`, `organization`, `notifications`, `dashboard`). These routes are the only layer that talks to the database directly.
+
+**Services**
+Authentication runs through NextAuth using the Credentials provider, with passwords hashed via bcrypt. Session and role checks happen at the API layer before any asset, allocation, or booking operation is allowed to proceed.
+
+**Data layer**
+PostgreSQL, hosted on Neon, accessed through Neon's serverless driver with raw SQL rather than an ORM. Table definitions and migrations for the AssetFlow-specific tables (`af_users`, `af_departments`, `af_asset_categories`, `af_assets`, `af_allocations`, and related tables) live in `src/lib/assetflow-schema.ts` and run automatically on first request - there's no separate migration step to run by hand.
+
+**Integrations**
+Redis (Upstash) is used for caching. The `prisma/` folder and files under `legacy_*` and `_reference/` belong to the CTA Apparels base project this was built on top of and are not part of AssetFlow's data model.
+
+## Architecture Diagram
 
 ```mermaid
 flowchart TD
@@ -58,7 +106,114 @@ flowchart TD
     Upstash cache")]
 ```
 
-This matches the API route folders in the repo (`src/app/api/af/assets`, `allocations`, `bookings`, `maintenance`, `audits`, `transfers`, `organization`, `notifications`, `dashboard`) and the schema bootstrap in `src/lib/assetflow-schema.ts`, which creates and migrates each Postgres table (`af_users`, `af_departments`, `af_assets`, `af_allocations`, and so on) the first time the app runs.
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16 (App Router) |
+| Language | TypeScript |
+| UI Components | shadcn/ui, Radix UI |
+| Styling | Tailwind CSS v4 |
+| Client State | Zustand |
+| Data Fetching | TanStack Query, TanStack Table |
+| Forms & Validation | React Hook Form, Zod |
+| Authentication | NextAuth (Credentials provider), bcrypt |
+| Database | PostgreSQL (Neon serverless driver) |
+| Caching | Redis (Upstash) |
+| Animation | Framer Motion |
+| Tooling | Biome (lint/format), Husky, lint-staged |
+| Deployment | Vercel, with a Docker setup for self-hosting |
+
+## Folder Structure
+
+```
+AssetFlow/
+├── src/
+│   ├── app/
+│   │   ├── (main)/dashboard/
+│   │   │   ├── organization/     # Department, category, and employee directory management
+│   │   │   ├── assets/           # Asset registration, search, and per-asset history
+│   │   │   ├── allocations/      # Allocation and return handling
+│   │   │   ├── transfers/        # Transfer request approvals
+│   │   │   ├── bookings/         # Resource booking calendar
+│   │   │   ├── maintenance/      # Maintenance request workflow
+│   │   │   ├── audits/           # Audit cycle management
+│   │   │   ├── notifications/    # Activity log and alerts
+│   │   │   └── page.tsx          # Dashboard home
+│   │   ├── login/                # Authentication screens
+│   │   └── api/af/               # REST endpoints, one folder per module
+│   ├── components/erp/           # AssetFlow-specific UI components
+│   ├── lib/
+│   │   ├── assetflow-schema.ts   # Postgres table definitions and auto-migrations
+│   │   └── auth-config.ts        # NextAuth configuration and session handling
+│   └── stores/                   # Zustand client state
+├── prisma/                       # Legacy schema from the CTA Apparels base, unused by AssetFlow
+├── Dockerfile
+└── vercel.json
+```
+
+## Data Flow
+
+A request starts in the browser, hits a page under `src/app/(main)/dashboard/`, and that page calls the matching route under `src/app/api/af/`. The API route checks the session through NextAuth, runs the relevant business rule (allocation conflict check, booking overlap check, maintenance approval gate, or audit closure logic), reads or writes to PostgreSQL, and returns the result. Frequently accessed data is cached in Redis to reduce repeated database round-trips. The frontend then updates through TanStack Query, which keeps the UI in sync with the server state without a manual refresh.
+
+## Installation
+
+**Prerequisites**
+- Node.js 20 or newer
+- npm
+- A PostgreSQL database (Neon's free tier works well)
+- A Redis instance (Upstash), optional, used only for caching
+
+**Steps**
+
+```bash
+git clone https://github.com/diwakar-bhagat/odoo_26.git
+cd odoo_26/AssetFlow
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Open `http://localhost:3000`. The required database tables are created automatically on first request through `assetflow-schema.ts`.
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `DATABASE_URL` | PostgreSQL connection string (Neon) |
+| `NEXTAUTH_SECRET` | Secret used to sign NextAuth session tokens |
+| `NEXTAUTH_URL` | Base URL of the running app |
+| `UPSTASH_REDIS_REST_URL` | Redis REST endpoint, optional |
+| `UPSTASH_REDIS_REST_TOKEN` | Redis REST token, optional |
+| `ERP_SYNC_SECRET` | Shared secret for internal ERP sync endpoints |
+
+No secrets are committed to the repository. Copy `.env.example` to `.env.local` and fill in real values locally, or configure them as project environment variables in Vercel.
+
+## Local Development
+
+**Development mode**
+```bash
+npm run dev
+```
+Starts the Next.js dev server with hot reload.
+
+**Build mode**
+```bash
+npm run build
+```
+Produces a production build, including type checking.
+
+**Production mode**
+```bash
+npm run start
+```
+Runs the production build locally, the same way it would run in production.
+
+Before opening a pull request, run `npm run check`, which runs the build and Biome lint together.
+
+## Deployment
+
+The project is configured for Vercel deployment (`vercel.json`), which is the primary target. Environment variables are set in the Vercel project settings rather than committed to the repo. A Dockerfile is also included for teams that prefer to self-host - it builds a standalone Next.js output and runs it on Node 20 (Alpine).
 
 ## User Roles
 
@@ -67,143 +222,34 @@ This matches the API route folders in the repo (`src/app/api/af/assets`, `alloca
 - **Department Head** - views their department's allocated assets, approves allocation and transfer requests within the department, books shared resources on the department's behalf.
 - **Employee** - views assets allocated to them, books shared resources, raises maintenance requests, initiates returns and transfers.
 
-Signup only ever creates an Employee account - there's no role picker at signup. Department Head and Asset Manager roles are assigned only by an Admin, from the Employee Directory screen. That is the only place roles are ever changed.
+Signup only ever creates an Employee account. Department Head and Asset Manager are assigned exclusively by an Admin from the Employee Directory - there is no self-service way to elevate a role.
 
-## Screens and Modules
+## Security
 
-1. **Login / Signup** - email and password auth, forgot password, session validation
-2. **Dashboard** - KPI cards (Available, Allocated, Maintenance Today, Active Bookings, Pending Transfers, Upcoming Returns), overdue returns shown separately from upcoming ones, quick actions
-3. **Organization Setup (Admin only)** - Department Management, Asset Category Management, Employee Directory and role promotion
-4. **Asset Registration & Directory** - register assets with auto-generated tags, search and filter, lifecycle status, per-asset allocation and maintenance history
-5. **Asset Allocation & Transfer** - allocate to employee or department, conflict blocking, transfer workflow, return with condition check-in notes
-6. **Resource Booking** - calendar view per resource, overlap validation, cancel/reschedule, reminder notifications
-7. **Maintenance Management** - Pending, Approved/Rejected, Technician Assigned, In Progress, Resolved, with the asset status syncing automatically at each step
-8. **Asset Audit** - audit cycles with assigned auditors, each asset marked Verified/Missing/Damaged, auto-generated discrepancy reports, cycle closure
-9. **Reports & Analytics** - utilization trends, maintenance frequency, department allocation summary, booking heatmap, exportable reports
-10. **Activity Logs & Notifications** - every action logged, real-time alerts for assignments, approvals, overdue returns, and audit flags
+Authentication is handled by NextAuth using the Credentials provider, with passwords hashed using bcrypt before storage - plaintext passwords are never persisted. Sessions are validated on every API request before any read or write to asset, allocation, booking, maintenance, or audit data is permitted.
 
-## Business Rules
+Authorization is role-based and enforced server-side in the API routes, not just hidden in the UI - a Department Head calling an admin-only endpoint directly would still be rejected. Because role assignment only happens through the Admin-controlled Employee Directory, there is no code path that lets a user grant themselves elevated permissions.
 
-**Allocation conflict** - Priya has Laptop AF-0114. If Raj tries to allocate the same laptop, the system blocks it, shows him it's currently held by Priya, and offers a Transfer Request instead.
+## Performance Considerations
 
-**Booking overlap** - Room B2 is booked 9:00 to 10:00. A request for 9:30 to 10:30 is rejected because it overlaps. A request for 10:00 to 11:00 goes through because it starts right after the existing booking ends.
+TanStack Query caches and deduplicates data fetching on the client, so navigating between screens doesn't trigger unnecessary repeat requests. Redis sits in front of PostgreSQL for frequently accessed data, reducing load on the database for read-heavy operations like dashboard KPIs. The production build runs through Next.js's standard optimizations (route-based code splitting, image optimization, and the standalone output used in the Docker image) to keep bundle size and cold-start time down.
 
-**Maintenance gating** - An asset stays Available until its maintenance request is Approved by an Asset Manager. Only then does it move to Under Maintenance. It moves back to Available once the request is Resolved.
+## Future Enhancements
 
-**Audit closure** - Closing an audit cycle locks it and updates asset statuses automatically - confirmed-missing items get marked Lost.
-
-## Project Structure
-
-```
-AssetFlow/
-  src/
-    app/
-      (main)/dashboard/
-        organization/     Screen 3 - Departments, Categories, Employee Directory
-        assets/           Screen 4 - Asset Registration & Directory
-        allocations/      Screen 5 - Allocation & Transfer
-        transfers/        Transfer request approvals
-        bookings/         Screen 6 - Resource Booking
-        maintenance/      Screen 7 - Maintenance Management
-        audits/           Screen 8 - Asset Audit
-        notifications/    Screen 10 - Activity Logs & Notifications
-        page.tsx          Screen 2 - Dashboard / Home
-      login/              Screen 1 - Login / Signup
-      api/af/             REST endpoints for assets, allocations, bookings,
-                          maintenance, audits, transfers, organization,
-                          notifications, and the dashboard
-    components/erp/       AssetFlow-specific UI components
-    lib/assetflow-schema.ts   Postgres table definitions and auto-migrations
-    lib/auth-config.ts    NextAuth credentials and role-based sessions
-    stores/                Zustand client state
-  prisma/                 Legacy schema from the CTA Apparels base, not used by AssetFlow
-  Dockerfile
-  vercel.json
-```
-
-## Getting Started
-
-You'll need:
-
-- Node.js 20 or newer
-- npm
-- A PostgreSQL database (Neon's free tier works well: console.neon.tech)
-- A Redis instance (Upstash, optional - only needed for caching)
-
-Steps:
-
-1. Clone the repo and move into the AssetFlow folder
-   ```
-   git clone https://github.com/diwakar-bhagat/odoo_26.git
-   cd odoo_26/AssetFlow
-   ```
-
-2. Install dependencies
-   ```
-   npm install
-   ```
-
-3. Set up your environment file
-   ```
-   cp .env.example .env.local
-   ```
-   Then open `.env.local` and fill in the values - see the table below for what each one is and where to get it.
-
-4. Start the dev server
-   ```
-   npm run dev
-   ```
-
-5. Open the app at http://localhost:3000. The first request will automatically create all the required database tables through `assetflow-schema.ts` - there's no separate migration command to run.
-
-6. Sign up through the login screen. This always creates an Employee account. To get your first Admin account, update the `role` column for that user directly in the `af_users` table in your database - after that, you can promote everyone else through the Employee Directory screen.
-
-## Environment Variables
-
-| Variable | Description | Where to get it |
-|---|---|---|
-| DATABASE_URL | Postgres connection string | Neon Console, under Connection strings |
-| NEXTAUTH_SECRET | Random secret used to sign session tokens | Generate one with `openssl rand -base64 32` |
-| NEXTAUTH_URL | Base URL of the app | `http://localhost:3000` for local dev |
-| UPSTASH_REDIS_REST_URL | Redis REST endpoint, optional | Upstash Console |
-| UPSTASH_REDIS_REST_TOKEN | Redis REST token, optional | Upstash Console |
-| ERP_SYNC_SECRET | Shared secret for internal ERP sync endpoints | Any random string you choose |
-
-## Available Scripts
-
-| Command | What it does |
-|---|---|
-| npm run dev | Starts the dev server with hot reload |
-| npm run build | Creates a production build |
-| npm run start | Runs the production build |
-| npm run lint | Lints the codebase with Biome |
-| npm run format | Auto-formats the codebase with Biome |
-| npm run check | Runs build and lint together |
-
-## Docker
-
-```
-docker build -t assetflow .
-docker run -p 3000:3000 --env-file .env.local assetflow
-```
-
-## Team
-
-- **Diwakar** - Team Lead. Owns system architecture, backend, REST API design, business logic, the workflow engine, authentication, authorization/RBAC, and database architecture. Directories: `src/app/api/`, `src/lib/`, `middleware.ts`.
-- **Gautam Sharma** - Frontend Lead. Owns UI components, the dashboard, layouts, responsive design, and overall user experience. Directories: `src/components/`, `src/app/`, `src/layout/`.
-- **Vansh Harit** - Database & Integration Lead. Owns the Prisma schema (legacy), Postgres schema work, migrations, seed data, and connecting the frontend to the APIs. Directories: `prisma/`, `src/db/`, `src/repositories/`.
-- **Garv Kathuria** - QA & Support. Owns manual testing, documentation, demo data, and static assets. Directories: `docs/`, `README.md`, `public/`.
-
-Full branching strategy and daily Git workflow are in `TEAM_WORKFLOW.md`.
+- Finish removing the leftover CTA Apparels navigation items and complete the rebrand of the admin shell
+- QR-code based asset lookup for faster physical audits
+- Email/SMS delivery for overdue return and booking reminders, in addition to in-app notifications
+- Bulk asset import via CSV or Excel
+- Exportable audit and utilization reports as PDF
 
 ## Contributing
 
-1. Fork the repo and create a feature branch, for example `feature/your-feature-name`
-2. Follow the existing module pattern: `src/app/(main)/dashboard/<module>` paired with `src/app/api/af/<module>`
+1. Fork the repository and create a feature branch, for example `feature/your-feature-name`
+2. Follow the existing module pattern: a page under `src/app/(main)/dashboard/<module>` paired with a route under `src/app/api/af/<module>`
 3. Run `npm run check` before pushing
-4. Open a pull request describing which screen or module you touched and why
+4. Open a pull request describing which screen or module was touched and why
 
-More detail is in `CONTRIBUTING.md`.
+Full branching strategy and day-to-day Git workflow are documented in `TEAM_WORKFLOW.md`.
 
 ## License
 
