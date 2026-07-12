@@ -3,6 +3,7 @@
 
 import { CircleUser, CreditCard, EllipsisVertical, LogOut, MessageSquareDot } from "lucide-react";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -20,21 +21,15 @@ import { getInitials } from "@/lib/utils";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
-  const isLoaded = true;
-  const user = {
-    fullName: "Admin User",
-    username: "admin",
-    primaryEmailAddress: { emailAddress: "admin@rootstechnology.in" },
-    hasImage: false,
-    imageUrl: "",
-  };
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   const handleLogout = async () => {
     toast.info("Signed out successfully");
     window.location.href = "/login";
   };
 
-  if (!isLoaded) {
+  if (status === "loading") {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -52,15 +47,10 @@ export function NavUser() {
 
   if (!user) return null;
 
-  const userName = user.fullName ?? user.username ?? "User";
-  const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
+  const userName = user.name ?? "User";
+  const userEmail = user.email ?? "";
   const initials = getInitials(userName);
-  // Only use Clerk's imageUrl when the user actually has a real profile picture
-  // (e.g. signed up via Google). For email/password users, Clerk returns a blank
-  // default avatar, so we fall back to a generated initials avatar instead.
-  const userAvatar = user.hasImage
-    ? user.imageUrl
-    : `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
+  const userAvatar = user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
 
   return (
     <SidebarMenu>

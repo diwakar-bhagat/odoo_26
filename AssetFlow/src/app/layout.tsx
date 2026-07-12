@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 
 import type { Metadata } from "next";
 
+import { AuthProvider } from "@/components/providers/auth-provider";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -64,20 +65,22 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <ThemeBootScript />
       </head>
       <body className={`${fontVars} min-h-screen antialiased`}>
-        <TooltipProvider>
-          <PreferencesStoreProvider
-            themeMode={theme_mode}
-            themePreset={theme_preset}
-            contentLayout={content_layout}
-            navbarStyle={navbar_style}
-            font={font}
-          >
-            <QueryProvider>
-              <SettingsProvider>{children}</SettingsProvider>
-            </QueryProvider>
-            <Toaster />
-          </PreferencesStoreProvider>
-        </TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <PreferencesStoreProvider
+              themeMode={theme_mode}
+              themePreset={theme_preset}
+              contentLayout={content_layout}
+              navbarStyle={navbar_style}
+              font={font}
+            >
+              <QueryProvider>
+                <SettingsProvider>{children}</SettingsProvider>
+              </QueryProvider>
+              <Toaster />
+            </PreferencesStoreProvider>
+          </TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );
