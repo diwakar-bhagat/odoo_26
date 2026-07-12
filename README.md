@@ -2,7 +2,7 @@
 
 AssetFlow is an enterprise asset and resource management system that gives organizations a single, structured place to track equipment, allocate it to the right people, book shared spaces without conflicts, and keep maintenance and audits under proper approval. It's built for any organization that owns physical things and shared spaces - offices, schools, hospitals, factories, agencies - and is currently being developed by our team for Odoo Hackathon '26. The people who use it day to day are admins setting up departments and categories, asset managers registering and allocating equipment, department heads approving requests for their teams, and employees booking rooms or reporting a broken laptop. The business case is simple: spreadsheets and paper logs don't scale, they don't prevent double-booking, and they don't stop someone from allocating an asset that's already with someone else. AssetFlow replaces that with rules the system enforces automatically.
 
-Webside- assetflow-plum.vercel.app/
+Website - https://assetflow-plum.vercel.app/
 
 ## Overview
 
