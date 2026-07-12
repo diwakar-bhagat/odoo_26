@@ -3,12 +3,12 @@ import packageJson from "../../package.json";
 const currentYear = new Date().getFullYear();
 
 export const APP_CONFIG = {
-  name: "CTA Apparels",
+  name: "AssetFlow ERP",
   version: packageJson.version,
-  copyright: `© ${currentYear}, CTA Apparels Pvt. Ltd.`,
+  copyright: `© ${currentYear}, AssetFlow ERP Pvt. Ltd.`,
   meta: {
-    title: "CTA Apparels - Merchandising Dashboard",
+    title: "AssetFlow - Asset Management Dashboard",
     description:
-      "Advanced merchandising and TNA tracking system for CTA Apparels. Manage orders, sample tracking, inventory, and supplier performance in one integrated platform.",
+      "Advanced enterprise asset management and tracking system for AssetFlow ERP. Manage assets, allocations, bookings, maintenance, audits, and performance reports in one integrated platform.",
   },
 };

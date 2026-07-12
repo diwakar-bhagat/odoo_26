@@ -7,7 +7,7 @@ import {
   ShieldCheck,
   Building2,
   Bell,
-  LucideIcon
+  type LucideIcon
 } from "lucide-react";
 
 export type NavMainItem = {

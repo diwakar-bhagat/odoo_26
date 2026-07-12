@@ -1,0 +1,14 @@
+{
+  "name": "assetflow-root",
+  "private": true,
+  "workspaces": [
+    "AssetFlow"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=AssetFlow",
+    "build": "npm run build --workspace=AssetFlow",
+    "start": "npm run start --workspace=AssetFlow",
+    "lint": "npm run lint --workspace=AssetFlow",
+    "format": "npm run format --workspace=AssetFlow"
+  }
+}
