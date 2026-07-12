@@ -1,65 +1,49 @@
-<<<<<<< Updated upstream
-# Project Overview: Next.js and TypeScript ERP System
-This project is a comprehensive Enterprise Resource Planning (ERP) system built using Next.js and TypeScript. It provides a robust and scalable solution for managing various aspects of an organization, including database configuration, API routes, frontend pages, components, and data validation. The system is designed to be highly customizable and extensible, allowing developers to easily integrate new features and modules.
+# AssetFlow
 
-##  Key Features
-* **Modular Architecture**: The system is built using a modular architecture, allowing developers to easily add or remove features and modules as needed.
-* **TypeScript Support**: The project uses TypeScript, providing strong typing and improved code maintainability.
-* **Next.js Framework**: The system is built using the Next.js framework, providing a robust and scalable solution for building server-side rendered (SSR) and statically generated websites.
-* **Database Configuration**: The system provides a comprehensive database configuration system, allowing developers to easily manage database connections and schema.
-* **API Routes**: The system provides a robust API routing system, allowing developers to easily define and manage API endpoints.
-* **Frontend Pages and Components**: The system provides a set of pre-built frontend pages and components, allowing developers to easily build and customize the user interface.
+Enterprise Asset & Resource Management ERP — a hackathon project for tracking, allocating, and
+maintaining physical assets and shared resources (equipment, vehicles, rooms) across an organization.
 
-##  Tech Stack
-* **Next.js**: A popular React-based framework for building server-side rendered (SSR) and statically generated websites.
-* **TypeScript**: A superset of JavaScript that provides strong typing and improved code maintainability.
-* **PostCSS**: A tool for transforming CSS with JavaScript plugins.
-* **Tailwind CSS**: A utility-first CSS framework for building custom user interfaces.
-* **Docker**: A containerization platform for building, shipping, and running containers.
-* **npm**: A package manager for JavaScript and Node.js.
-* **Vite**: A build tool for modern web applications.
+## Tech stack
 
-## Installation
-To install the project, follow these steps:
-1. Clone the repository using `git clone`.
-2. Install the dependencies using `npm install`.
-3. Build the project using `npm run build`.
-4. Start the development server using `npm run dev`.
+- **Framework**: Next.js 16 (App Router), React 19, TypeScript
+- **Auth**: NextAuth (Credentials provider) + bcrypt, against a custom `af_users` table
+- **Database**: PostgreSQL via Neon serverless driver (`@neondatabase/serverless`), raw SQL —
+  no ORM. Schema is created imperatively on first use by `src/lib/assetflow-schema.ts`.
+- **UI**: Tailwind CSS v4, shadcn/radix-ui
+- **Cache** (optional): Upstash Redis REST
 
-## Usage
-To use the project, follow these steps:
-1. Start the development server using `npm run dev`.
-2. Open a web browser and navigate to `http://localhost:3000`.
-3. Log in to the system using the default credentials (username: `admin`, password: `password`).
-4. Explore the system and customize the configuration as needed.
+## Setup
 
-## Project Structure
-```markdown
-.
-├── components
-├── containers
-├── pages
-├── public
-├── scripts
-├── styles
-├── tsconfig.json
-├── next.config.mjs
-├── Dockerfile
-├── package.json
-├── README.md
-└── node_modules
+```bash
+npm install
+cp .env.example .env.local   # fill in DATABASE_URL at minimum
+npm run dev
 ```
 
+On first run, bootstrap the schema and demo data by sending one request:
 
-## Contributing
-To contribute to the project, follow these steps:
-1. Fork the repository using `git fork`.
-2. Create a new branch using `git branch`.
-3. Make changes to the code and commit them using `git commit`.
-4. Push the changes to the remote repository using `git push`.
-5. Create a pull request to merge the changes into the main branch.
+```bash
+curl -X POST http://localhost:3000/api/setup/assetflow
+```
 
-##  License
-The project is licensed under the MIT License.
-## AIML ON TOP
-IN Progress
+This creates the `af_*` tables and seeds departments, asset categories, and four demo accounts
+(password `password123` for all):
+
+| Email | Role |
+|---|---|
+| `admin@assetflow.dev` | Admin |
+| `manager@assetflow.dev` | Asset Manager |
+| `head@assetflow.dev` | Department Head |
+| `employee@assetflow.dev` | Employee |
+
+## Scripts
+
+- `npm run dev` — start the dev server
+- `npm run build` — production build
+- `npm run lint` — Biome lint
+- `npm run check` — build + lint
+
+## Known gaps
+
+- Employee self-signup and admin role-promotion (per the PRD) are not yet wired up — only the
+  four seeded demo accounts can log in today.

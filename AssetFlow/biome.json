@@ -3,7 +3,7 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": false
   },
   "assist": {
     "enabled": true,
@@ -33,25 +33,6 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!.backup",
-      "!_reference",
-      "!erp.ctaapparels.com",
-      "!legacy_assets",
-      "!Dashboard.html",
-      "!legacy_dashboard.html",
-      "!legacy_saved_resource.html",
-      "!saved_resource.html",
-      "!legacy_data.json",
-      "!extract_data.js",
-      "!index-*.js",
-      "!index-*.css",
-      "!login-*.css",
-      "!SetAvatar-*.css",
-      "!TaskManager-*.css",
-      "!showVGOrderItem-*.css",
-      "!v8c78df7c7c0f484497ecbca7046644da1771523124516",
-      "!clerk-nextjs",
-      "!src/app/aura.css",
       "!.github",
       "!.husky",
       "!node_modules",
