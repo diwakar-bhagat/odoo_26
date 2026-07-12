@@ -67,17 +67,7 @@ export async function OperationsLayout({ children }: Readonly<{ children: ReactN
               <LayoutControls />
               <ThemeSwitcher />
               <NotificationsPanel />
-              <Button asChild size="icon">
-                <Link
-                  prefetch={false}
-                  href="https://github.com/diwakar-bhagat"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Open GitHub repository"
-                >
-                  <SimpleIcon icon={siGithub} className="fill-primary-foreground" />
-                </Link>
-              </Button>
+
               <AccountSwitcher />
             </div>
           </div>

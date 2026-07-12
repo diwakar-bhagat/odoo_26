@@ -7,6 +7,7 @@
  * preventing layout or theme flicker and keeping RootLayout fully static.
  */
 import { PREFERENCE_DEFAULTS, PREFERENCE_PERSISTENCE } from "@/lib/preferences/preferences-config";
+import Script from "next/script";
 
 export function ThemeBootScript() {
   const persistence = JSON.stringify({
@@ -109,5 +110,5 @@ export function ThemeBootScript() {
   `;
 
   /* biome-ignore lint/security/noDangerouslySetInnerHtml: required for pre-hydration boot script */
-  return <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: code }} />;
+  return <Script id="theme-boot-script" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: code }} />;
 }

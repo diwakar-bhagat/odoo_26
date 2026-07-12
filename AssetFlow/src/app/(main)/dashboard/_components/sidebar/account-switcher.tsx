@@ -2,6 +2,7 @@
 
 
 import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -16,27 +17,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { getInitials } from "@/lib/utils";
 
 export function AccountSwitcher() {
-  const isLoaded = true;
-  const user = {
-    fullName: "Admin User",
-    primaryEmailAddress: { emailAddress: "admin@rootstechnology.in" },
-    hasImage: false,
-    imageUrl: "",
-  };
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
   const handleLogout = async () => {
     window.location.href = "/login";
   };
 
-  if (!isLoaded) {
+  if (status === "loading") {
     return <Skeleton className="h-8 w-8 rounded-lg" />;
   }
 
   if (!user) return null;
 
-  const userName = user.fullName ?? "User";
-  const userEmail = user.primaryEmailAddress?.emailAddress ?? "";
-  const userAvatar = user.imageUrl;
+  const userName = user.name ?? "User";
+  const userEmail = user.email ?? "";
+  const userAvatar = user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
 
   return (
     <DropdownMenu>
