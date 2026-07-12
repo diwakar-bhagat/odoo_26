@@ -159,18 +159,6 @@ docker build -t assetflow .
 docker run -p 3000:3000 --env-file .env.local assetflow
 ```
 
-## Screenshots
-
-This is the app as it stands right now, before the CTA Apparels rebrand cleanup mentioned above.
-
-Sidebar navigation, still showing the mixed CTA Apparels / AssetFlow menu:
-
-![Sidebar navigation](docs/screenshots/sidebar-navigation.png)
-
-Dashboard overview, running on the CTA Apparels base template:
-
-![Dashboard overview](docs/screenshots/dashboard-overview.png)
-
 ## What's Left To Do
 
 - Remove the leftover CTA Apparels sidebar items (CTA Mill, Procurement & Dispatch, Sample Tracking, Style Development, Fabric and Trim Inventory, Supplier Performance) and finish renaming the shell to AssetFlow
