@@ -32,6 +32,34 @@ If you open the app right now, the sidebar will still show a mix of old CTA Appa
 - Biome for linting and formatting, Husky and lint-staged for pre-commit checks
 - Deployed on Vercel, with a Docker setup available for self-hosting
 
+## Architecture
+
+At a high level: the browser talks to the Next.js application, which is split into frontend pages (the ten screens below) and API routes under `/api/af`. Those routes are the only thing that touches the database - they go through NextAuth for session/credential checks, PostgreSQL (Neon) for all persistent data, and Redis (Upstash) for caching.
+
+```mermaid
+flowchart TD
+    Browser["Browser client
+    React UI, Tailwind"]
+
+    subgraph NextJS["Next.js application - App Router"]
+        Frontend["Frontend pages
+        Dashboard, assets, bookings, etc."]
+        API["API routes
+        /api/af/*"]
+        Frontend --> API
+    end
+
+    Browser --> NextJS
+    API --> Auth["NextAuth
+    Credentials + bcrypt"]
+    API --> DB[("PostgreSQL
+    Neon serverless")]
+    API --> Cache[("Redis
+    Upstash cache")]
+```
+
+This matches the API route folders in the repo (`src/app/api/af/assets`, `allocations`, `bookings`, `maintenance`, `audits`, `transfers`, `organization`, `notifications`, `dashboard`) and the schema bootstrap in `src/lib/assetflow-schema.ts`, which creates and migrates each Postgres table (`af_users`, `af_departments`, `af_assets`, `af_allocations`, and so on) the first time the app runs.
+
 ## User Roles
 
 - **Admin** - sets up departments, asset categories, and audit cycles. Promotes employees to Department Head or Asset Manager. Views organization-wide analytics.
@@ -158,14 +186,6 @@ Steps:
 docker build -t assetflow .
 docker run -p 3000:3000 --env-file .env.local assetflow
 ```
-
-## What's Left To Do
-
-- Remove the leftover CTA Apparels sidebar items (CTA Mill, Procurement & Dispatch, Sample Tracking, Style Development, Fabric and Trim Inventory, Supplier Performance) and finish renaming the shell to AssetFlow
-- QR-code based asset lookup
-- Email/SMS delivery for overdue and reminder notifications
-- Bulk asset import via CSV or Excel
-- Exportable audit reports as PDF
 
 ## Team
 
