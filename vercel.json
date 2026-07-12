@@ -1,6 +1,0 @@
-{
-  "buildCommand": "npm run build --workspace=AssetFlow",
-  "outputDirectory": "AssetFlow/.next",
-  "installCommand": "npm ci",
-  "framework": null
-}
