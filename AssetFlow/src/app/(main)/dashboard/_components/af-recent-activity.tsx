@@ -28,15 +28,18 @@ export function RecentActivity({ allocations }: { allocations: any[] }) {
                 </tr>
               ) : (
                 allocations.map((alloc) => (
-                  <tr key={alloc.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
+                  <tr
+                    key={alloc.id}
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  >
                     <td className="p-4 align-middle font-medium">{alloc.asset_tag}</td>
                     <td className="p-4 align-middle">{alloc.asset_name}</td>
                     <td className="p-4 align-middle">{alloc.user_name || "Department"}</td>
+                    <td className="p-4 align-middle">{format(new Date(alloc.allocated_at), "MMM d, yyyy")}</td>
                     <td className="p-4 align-middle">
-                      {format(new Date(alloc.allocated_at), "MMM d, yyyy")}
-                    </td>
-                    <td className="p-4 align-middle">
-                      <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${alloc.status === 'Active' ? 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80' : 'text-foreground'}`}>
+                      <div
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${alloc.status === "Active" ? "border-transparent bg-primary text-primary-foreground hover:bg-primary/80" : "text-foreground"}`}
+                      >
                         {alloc.status}
                       </div>
                     </td>

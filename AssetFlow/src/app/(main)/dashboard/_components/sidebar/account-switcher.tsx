@@ -1,6 +1,5 @@
 "use client";
 
-
 import { BadgeCheck, Bell, CreditCard, LogOut } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -32,7 +31,9 @@ export function AccountSwitcher() {
 
   const userName = user.name ?? "User";
   const userEmail = user.email ?? "";
-  const userAvatar = user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
+  const userAvatar =
+    user.image ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
 
   return (
     <DropdownMenu>

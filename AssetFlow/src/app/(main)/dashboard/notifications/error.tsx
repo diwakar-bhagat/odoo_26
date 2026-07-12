@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { AlertCircle } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function NotificationsError({ error }: { error: Error }) {
   return (
@@ -10,7 +11,7 @@ export default function NotificationsError({ error }: { error: Error }) {
         <AlertCircle className="h-4 w-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
-          Failed to load notifications. {process.env.NODE_ENV === 'development' && error.message}
+          Failed to load notifications. {process.env.NODE_ENV === "development" && error.message}
         </AlertDescription>
       </Alert>
     </div>

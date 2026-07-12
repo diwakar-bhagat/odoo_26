@@ -212,18 +212,34 @@ export async function ensureAuditTable() {
   await ensureAssetsTable();
   await ensureUsersTable();
 
+  // Audit cycle: one row per audit run (started by an auditor, closed when done).
+  // Per-asset verification results (Verified/Missing/Damaged) belong in a separate
+  // af_audit_items table, not on this row - keep asset_id off af_audits.
   await sql`
     CREATE TABLE IF NOT EXISTS public.af_audits (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-      asset_id UUID NOT NULL REFERENCES public.af_assets(id) ON DELETE CASCADE,
       auditor_id UUID NOT NULL REFERENCES public.af_users(id) ON DELETE CASCADE,
-      found_status TEXT NOT NULL,
-      found_condition TEXT NOT NULL,
-      discrepancy TEXT,
+      status TEXT NOT NULL DEFAULT 'In Progress',
       notes TEXT,
-      audited_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+      started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      closed_at TIMESTAMPTZ
     )
   `;
+
+  // Migrate any earlier per-asset-shaped af_audits table (asset_id/found_status/
+  // found_condition NOT NULL) to the audit-cycle shape above.
+  await sql`ALTER TABLE public.af_audits ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'In Progress'`;
+  await sql`ALTER TABLE public.af_audits ADD COLUMN IF NOT EXISTS started_at TIMESTAMPTZ NOT NULL DEFAULT NOW()`;
+  await sql`ALTER TABLE public.af_audits ADD COLUMN IF NOT EXISTS closed_at TIMESTAMPTZ`;
+
+  const legacyColumns = await sql`
+    SELECT column_name FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'af_audits'
+      AND column_name IN ('asset_id', 'found_status', 'found_condition')
+  `;
+  for (const { column_name } of legacyColumns as { column_name: string }[]) {
+    await sql.query(`ALTER TABLE public.af_audits ALTER COLUMN ${column_name} DROP NOT NULL`);
+  }
 }
 
 export async function ensureNotificationsTable() {

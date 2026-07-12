@@ -1,12 +1,13 @@
-import { Metadata } from 'next';
-import { Suspense } from 'react';
+import { Suspense } from "react";
 
-import { NotificationsView } from '@/components/notifications/notifications-view';
-import { DataTableSkeleton } from '@/components/ui/skeletons/data-table-skeleton';
+import type { Metadata } from "next";
+
+import { NotificationsView } from "@/components/notifications/notifications-view";
+import { DataTableSkeleton } from "@/components/ui/skeletons/data-table-skeleton";
 
 export const metadata: Metadata = {
-  title: 'Notifications',
-  description: 'Notification center',
+  title: "Notifications",
+  description: "Notification center",
 };
 
 export default function NotificationsPage() {

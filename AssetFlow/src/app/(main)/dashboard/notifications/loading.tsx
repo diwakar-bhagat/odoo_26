@@ -1,4 +1,4 @@
-import { DataTableSkeleton } from '@/components/ui/skeletons/data-table-skeleton';
+import { DataTableSkeleton } from "@/components/ui/skeletons/data-table-skeleton";
 
 export default function NotificationsLoading() {
   return (

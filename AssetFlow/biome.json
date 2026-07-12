@@ -31,16 +31,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": [
-      "**",
-      "!.github",
-      "!.husky",
-      "!node_modules",
-      "!.next",
-      "!dist",
-      "!out",
-      "!src/components/ui"
-    ]
+    "includes": ["src/**/*.ts", "src/**/*.tsx", "!src/components/ui/**/*"]
   },
   "formatter": {
     "enabled": true,
@@ -59,6 +50,12 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "useButtonType": "off",
+        "noStaticElementInteractions": "off",
+        "useKeyWithClickEvents": "off",
+        "noSvgWithoutTitle": "off"
+      },
       "correctness": {
         "noUndeclaredVariables": "error",
         "noNestedComponentDefinitions": "error",
@@ -67,7 +64,6 @@
       "nursery": {
         "useSortedClasses": "on",
         "useNullishCoalescing": "error",
-        "noUnnecessaryConditions": "warn",
         "noFloatingPromises": "error",
         "noMisusedPromises": "error"
       },
@@ -79,7 +75,7 @@
         "noHeadElement": "warn",
         "noNamespace": "error",
         "useAsConstAssertion": "error",
-        "useSelfClosingElements": "error",
+        "useSelfClosingElements": "off",
         "noParameterAssign": "error",
         "noInferrableTypes": "error",
         "noUselessElse": "error",

@@ -11,10 +11,10 @@ const nextConfig = {
   compiler: {
     removeConsole: process.env.NODE_ENV === "production",
   },
-  // Set root directory to avoid Next.js incorrectly inferring user's home directory
-  outputFileTracingRoot: __dirname,
+  // Set root directory to avoid Next.js workspace resolution issues
+  outputFileTracingRoot: path.resolve(__dirname, ".."),
   turbopack: {
-    root: __dirname,
+    root: path.resolve(__dirname, ".."),
   },
 };
 

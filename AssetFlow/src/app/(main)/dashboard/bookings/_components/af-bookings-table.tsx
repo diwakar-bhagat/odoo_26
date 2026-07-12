@@ -1,25 +1,43 @@
 "use client";
 
 import { useState } from "react";
+
 import { format } from "date-fns";
+
+import { useAfMutation } from "@/components/assetflow/use-af-mutation";
+import { Button } from "@/components/ui/button";
 
 export function BookingsTable({ bookings }: { bookings: any[] }) {
   const [search, setSearch] = useState("");
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const { submit } = useAfMutation();
 
-  const filteredBookings = bookings.filter((booking) => 
-    booking.asset_name.toLowerCase().includes(search.toLowerCase()) || 
-    booking.user_name.toLowerCase().includes(search.toLowerCase())
+  const filteredBookings = bookings.filter(
+    (booking) =>
+      (booking.resource_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (booking.booked_by_name || "").toLowerCase().includes(search.toLowerCase()) ||
+      (booking.title || "").toLowerCase().includes(search.toLowerCase()),
   );
+
+  async function cancelBooking(id: string) {
+    setBusyId(id);
+    await submit({
+      url: `/api/af/bookings/${id}/cancel`,
+      method: "POST",
+      success: "Booking cancelled",
+    });
+    setBusyId(null);
+  }
 
   return (
     <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
-      <div className="p-4 border-b">
-        <input 
-          type="text" 
-          placeholder="Search by resource or user..." 
+      <div className="border-b p-4">
+        <input
+          type="text"
+          placeholder="Search by resource or title..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="flex h-9 w-full md:w-[300px] rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:w-[300px]"
         />
       </div>
       <div className="p-0">
@@ -45,34 +63,59 @@ export function BookingsTable({ bookings }: { bookings: any[] }) {
                 </tr>
               ) : (
                 filteredBookings.map((booking) => (
-                  <tr key={booking.id} className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                    <td className="p-4 align-middle font-medium text-primary">{booking.asset_name}</td>
-                    <td className="p-4 align-middle font-medium">{booking.user_name}</td>
+                  <tr
+                    key={booking.id}
+                    className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+                  >
                     <td className="p-4 align-middle">
-                      {format(new Date(booking.start_time), "MMM d, yyyy h:mm a")}
+                      <div className="font-medium text-primary">{booking.resource_name}</div>
+                      <div className="text-muted-foreground text-xs">{booking.asset_tag}</div>
                     </td>
+                    <td className="p-4 align-middle font-medium">{booking.booked_by_name}</td>
+                    <td className="p-4 align-middle">{format(new Date(booking.start_time), "MMM d, yyyy h:mm a")}</td>
                     <td className="p-4 align-middle">
-                      <span className={new Date(booking.end_time) < new Date() && booking.status === 'Ongoing' ? 'text-destructive font-medium' : ''}>
+                      <span
+                        className={
+                          new Date(booking.end_time) < new Date() && booking.status === "Ongoing"
+                            ? "font-medium text-destructive"
+                            : ""
+                        }
+                      >
                         {format(new Date(booking.end_time), "MMM d, yyyy h:mm a")}
                       </span>
                     </td>
-                    <td className="p-4 align-middle text-muted-foreground max-w-[200px] truncate" title={booking.purpose || ""}>
-                      {booking.purpose || "-"}
+                    <td
+                      className="max-w-[200px] truncate p-4 align-middle text-muted-foreground"
+                      title={booking.title || ""}
+                    >
+                      {booking.title || "-"}
                     </td>
                     <td className="p-4 align-middle">
-                      <div className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 
-                        ${booking.status === 'Upcoming' ? 'border-transparent bg-blue-500 text-white' : 
-                          booking.status === 'Ongoing' ? 'border-transparent bg-amber-500 text-white' : 
-                          booking.status === 'Completed' ? 'border-transparent bg-emerald-500 text-white' : 
-                          'border-transparent bg-slate-500 text-white'}`}>
+                      <div
+                        className={`inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ${
+                          booking.status === "Upcoming"
+                            ? "border-transparent bg-blue-500 text-white"
+                            : booking.status === "Ongoing"
+                              ? "border-transparent bg-amber-500 text-white"
+                              : booking.status === "Completed"
+                                ? "border-transparent bg-emerald-500 text-white"
+                                : "border-transparent bg-slate-500 text-white"
+                        }`}
+                      >
                         {booking.status}
                       </div>
                     </td>
-                    <td className="p-4 align-middle text-right">
-                      {booking.status === 'Upcoming' && (
-                        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 text-destructive hover:bg-destructive/10 h-8 px-3">
-                          Cancel
-                        </button>
+                    <td className="p-4 text-right align-middle">
+                      {(booking.status === "Upcoming" || booking.status === "Ongoing") && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 text-destructive hover:bg-destructive/10 hover:text-destructive"
+                          disabled={busyId === booking.id}
+                          onClick={() => cancelBooking(booking.id)}
+                        >
+                          {busyId === booking.id ? "…" : "Cancel"}
+                        </Button>
                       )}
                     </td>
                   </tr>

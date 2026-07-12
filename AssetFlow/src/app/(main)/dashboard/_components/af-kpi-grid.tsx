@@ -1,4 +1,4 @@
-import { Box, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Box, CheckCircle2, Clock } from "lucide-react";
 
 interface KPIGridProps {
   kpis: {
@@ -28,7 +28,7 @@ export function KPIGrid({ kpis }: KPIGridProps) {
           <p className="text-xs text-muted-foreground mt-1">Across all categories</p>
         </div>
       </div>
-      
+
       <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
         <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
           <h3 className="tracking-tight text-sm font-medium">Available Assets</h3>
@@ -37,11 +37,12 @@ export function KPIGrid({ kpis }: KPIGridProps) {
         <div className="p-6 pt-0">
           <div className="text-2xl font-bold">{kpis.available_assets}</div>
           <p className="text-xs text-muted-foreground mt-1">
-            {kpis.total_assets > 0 ? Math.round((kpis.available_assets / kpis.total_assets) * 100) : 0}% of total inventory
+            {kpis.total_assets > 0 ? Math.round((kpis.available_assets / kpis.total_assets) * 100) : 0}% of total
+            inventory
           </p>
         </div>
       </div>
-      
+
       <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
         <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
           <h3 className="tracking-tight text-sm font-medium">Active Bookings</h3>
@@ -52,14 +53,18 @@ export function KPIGrid({ kpis }: KPIGridProps) {
           <p className="text-xs text-muted-foreground mt-1">Resources currently booked</p>
         </div>
       </div>
-      
+
       <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
         <div className="p-6 flex flex-row items-center justify-between space-y-0 pb-2">
           <h3 className="tracking-tight text-sm font-medium">Overdue Items</h3>
-          <AlertTriangle className={`h-4 w-4 ${kpis.overdue_total > 0 ? 'text-destructive' : 'text-muted-foreground'}`} />
+          <AlertTriangle
+            className={`h-4 w-4 ${kpis.overdue_total > 0 ? "text-destructive" : "text-muted-foreground"}`}
+          />
         </div>
         <div className="p-6 pt-0">
-          <div className={`text-2xl font-bold ${kpis.overdue_total > 0 ? 'text-destructive' : ''}`}>{kpis.overdue_total}</div>
+          <div className={`text-2xl font-bold ${kpis.overdue_total > 0 ? "text-destructive" : ""}`}>
+            {kpis.overdue_total}
+          </div>
           <p className="text-xs text-muted-foreground mt-1">
             {kpis.overdue_returns} returns, {kpis.overdue_bookings} bookings
           </p>

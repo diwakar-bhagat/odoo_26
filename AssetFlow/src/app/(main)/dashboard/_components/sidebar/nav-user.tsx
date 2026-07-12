@@ -1,9 +1,8 @@
 "use client";
 
-
 import { CircleUser, CreditCard, EllipsisVertical, LogOut, MessageSquareDot } from "lucide-react";
-import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { toast } from "sonner";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -50,7 +49,9 @@ export function NavUser() {
   const userName = user.name ?? "User";
   const userEmail = user.email ?? "";
   const initials = getInitials(userName);
-  const userAvatar = user.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
+  const userAvatar =
+    user.image ||
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=3b82f6&color=fff&bold=true&format=svg`;
 
   return (
     <SidebarMenu>

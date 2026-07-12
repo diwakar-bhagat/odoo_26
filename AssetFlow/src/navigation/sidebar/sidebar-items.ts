@@ -1,28 +1,40 @@
 import {
-  LayoutDashboard,
-  Box,
   ArrowRightLeft,
-  CalendarDays,
-  Wrench,
-  ShieldCheck,
-  Building2,
   Bell,
-  type LucideIcon
+  Box,
+  Building2,
+  CalendarDays,
+  LayoutDashboard,
+  type LucideIcon,
+  ShieldCheck,
+  Wrench,
 } from "lucide-react";
+
+export interface NavSubItem {
+  title: string;
+  url: string;
+  icon?: LucideIcon;
+  comingSoon?: boolean;
+  newTab?: boolean;
+  isNew?: boolean;
+}
 
 export type NavMainItem = {
   title: string;
   url: string;
   icon?: LucideIcon;
   isActive?: boolean;
-  items?: {
-    title: string;
-    url: string;
-  }[];
+  subItems?: NavSubItem[];
+  comingSoon?: boolean;
+  newTab?: boolean;
+  isNew?: boolean;
+  badge?: number | string;
 };
 
 export type NavGroup = {
-  title: string;
+  id?: number;
+  title?: string;
+  label?: string;
   items: NavMainItem[];
 };
 
@@ -76,5 +88,5 @@ export const sidebarItems: NavGroup[] = [
         icon: Building2,
       },
     ],
-  }
+  },
 ];

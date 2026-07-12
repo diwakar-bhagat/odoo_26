@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { sql } from "@/lib/db";
-import { getCurrentUser } from "@/lib/auth-utils";
+
 import { ensureAssetsTable } from "@/lib/assetflow-schema";
+import { getCurrentUser } from "@/lib/auth-utils";
+import { sql } from "@/lib/db";
 
 export async function GET(request: Request) {
   try {
@@ -47,15 +48,16 @@ export async function GET(request: Request) {
     query += ` ORDER BY a.created_at DESC`;
 
     // Use tagged template for simple case, raw for dynamic
-    const assets = params.length === 0
-      ? await sql`
+    const assets =
+      params.length === 0
+        ? await sql`
           SELECT a.*, c.name as category_name, d.name as department_name
           FROM public.af_assets a
           LEFT JOIN public.af_asset_categories c ON a.category_id = c.id
           LEFT JOIN public.af_departments d ON a.department_id = d.id
           ORDER BY a.created_at DESC
         `
-      : await sql(query, params);
+        : await sql.query(query, params);
 
     return NextResponse.json({ assets });
   } catch (err: unknown) {
@@ -77,7 +79,18 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, asset_tag, serial_number, category_id, location, department_id, purchase_cost, condition, is_bookable, notes } = body;
+    const {
+      name,
+      asset_tag,
+      serial_number,
+      category_id,
+      location,
+      department_id,
+      purchase_cost,
+      condition,
+      is_bookable,
+      notes,
+    } = body;
 
     if (!name || !asset_tag) {
       return NextResponse.json({ error: "name and asset_tag are required" }, { status: 400 });

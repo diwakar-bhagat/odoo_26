@@ -24,9 +24,17 @@
     "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts"],
-<<<<<<< HEAD
-  "exclude": ["node_modules", ".backup", "_reference", "CRM-FOR-APPAREL", "prisma", "Odoo", "erp.ctaapparels.com", "legacy_assets"]
-=======
-  "exclude": ["node_modules", ".backup", "_reference", "CRM-FOR-APPAREL", "prisma", "Odoo", "erp.ctaapparels.com", "legacy_assets", "dashboard", "generated", ".next"]
->>>>>>> 2206cbb17ace4ce6b8bc00648861b288d10e65af
+  "exclude": [
+    "node_modules",
+    ".backup",
+    "_reference",
+    "CRM-FOR-APPAREL",
+    "prisma",
+    "Odoo",
+    "erp.ctaapparels.com",
+    "legacy_assets",
+    "dashboard",
+    "generated",
+    ".next"
+  ]
 }
